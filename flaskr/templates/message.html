@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% from "_helpers.html" import render_field %}
+{% from "_helpers.html" import validate_picture %}
+
+{% block title %}
+    Message{{super()}}
+{% endblock %}
+
+{% block container %}
+<script>
+    // Ajaxで5秒間に未読メッセージを取得する
+    $(function(){
+        timer = setInterval('get_unread_messages()', 5000);
+        // 初期表示で画面の一番下にいく
+        var scroll = (document.scrollingElement || document.body);
+        scroll.scrollTop == scroll.scrollHeight;
+    });
+    user_id = '{{friend.id}}';
+    function get_unread_messages(){
+        // /message_ajaxと対応させながら未読メッセージを取得
+        $.getJSON('/message_ajax', {
+            user_id: user_id
+        },
+        function(data){
+            $('#message-form').before(data['data']);
+        });
+    };
+</script>
+
+<h1>メッセージ画面</h1>
+{% for message in messages %}
+
+    {% if message.from_user_id == (current_user.get_id()|int) %}
+        <!-- 自分側 -->
+        <div class="col-md-2">
+            {{validate_picture(current_user, 'image-mini')}}
+            <p>{{current_user.username}}</p>
+        </div>
+        <div class="speech-bubble-self col-md-4">
+            {{message.message|urlize(target=true)}}
+            <p></p>
+            <p>{{message.create_at.strftime('%H:%M')}}</p>
+        </div>
+
+        {% if message.is_read %}
+            <div class="col-md-2">
+                <p>既読</p>
+            </div>
+            <div class="col-md-4"></div>
+        {% else %}
+            <div class="col-md-6"></div>
+        {% endif %} 
+
+    {% else %}
+        <!-- 相手側 -->
+        <div class="col-md-6"></div>
+
+        <div class="speech-bubble-dest col-md-4">
+            {{message.message|urlize(target=true)}}
+            <p></p>
+            <p>{{message.create_at.strftime('%H:%M')}}</p>
+        </div>
+        <div class="col-md-2">
+            {{validate_picture(friend, 'image-mini')}}
+            <p>{{friend.username}}</p>
+        </div>
+
+
+
+
+    {% endif %}
+
+{% endfor %}
+
+<form id="message-form" method="POST" action="{{url_for('message', to_user_id=friend.id)}}">
+    {{form.to_user_id(value=friend.id)}}
+    {{render_field(form.message, cols="50", rows="5")}}
+    {{form.submit()}}
+</form>
+
+{% endblock %}

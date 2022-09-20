@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% from '_helpers.html' import render_field %}
+{% from '_helpers.html' import validate_picture %}
+
+{% block title %}
+    User Search{{super()}}
+{% endblock %}
+
+{% block container %}
+<h1>ユーザ検索画面</h1>
+
+<!-- flashを実行する -->
+{% for message in get_flashed_messages() %}
+<p>※{{message}}</p>
+{% endfor %}
+
+<form method="POST">
+    {{render_field(form.username)}}
+    {{form.submit()}}
+</form>
+
+
+{% if users %}
+    <table class="table table-striped">
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">ユーザ名</th>
+            <th scope="col">ユーザ画面</th>
+            <th scope="col">コメント</th>
+            <th scope="col">友達申請</th>
+        </tr>        
+        {% for user in users %}
+            <tr>
+                <td>{{loop.index}}</td>
+                <td>{{user.username}}</td>
+                <td>
+                    {{validate_picture(user, 'image-small')}}
+                </td>
+                <td>{{user.comment}}</td>
+                <td>
+                    {% if (user.joined_status_from_currentuser == 2) or (user.joined_status_from_user == 2) %}
+                    <p>友達です</p>
+                    {% elif user.joined_status_from_currentuser == 1 %}
+                    <p>友達申請中</p>
+                    {% elif user.joined_status_from_user == 1 %}
+                    <form method="POST" action="{{url_for('user_connect')}}">
+                        {{connect_form.to_user_id(value=user.id)}}
+                        {{connect_form.connect_status(value='approve')}}
+                        {{connect_form.submit(class="btn btn-info", value="友達承認する")}}
+                    </form>
+                    {% else %}
+                    <form method="POST" action="{{url_for('user_connect')}}">
+                        {{connect_form.to_user_id(value=user.id)}}
+                        {{connect_form.connect_status(value='apply')}}
+                        {{connect_form.submit(class="btn btn-info", value="友達申請する")}}
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}    
+    </table>
+{% endif %}
+
+{% endblock %}

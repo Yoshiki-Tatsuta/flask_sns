@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% from '_helpers.html' import render_field %}
+
+{% block title %}
+    Register{{super()}}
+{% endblock %}
+
+{% block container %}
+<h1>新規アカウント登録画面</h1>
+
+<!-- flashを実行する -->
+
+{% for message in get_flashed_messages() %}
+    <p>※{{message}}</p>
+{% endfor %}
+
+<form method="POST">
+    {{render_field(form.username)}}
+    {{render_field(form.email)}}
+    {{render_field(form.password)}}
+    {{render_field(form.conf_password)}}
+    {{form.submit()}}
+</form>
+
+{% endblock %}

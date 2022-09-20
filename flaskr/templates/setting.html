@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% from '_helpers.html' import render_field %}
+
+{% block title %}
+    Setting{{super()}}
+{% endblock %}
+
+{% block container %}
+<h1>アカウント設定画面</h1>
+
+<!-- flashを実行する -->
+{% for message in get_flashed_messages() %}
+<p>※{{message}}</p>
+{% endfor %}
+
+<form method="POST" enctype="multipart/form-data">
+    {{render_field(form.username, value=current_user.username)}}
+    {{render_field(form.email, value=current_user.email)}}
+    {{render_field(form.comment)}}
+    {{render_field(form.picture_path)}}
+    {{form.submit()}}
+</form>
+
+{% endblock %}

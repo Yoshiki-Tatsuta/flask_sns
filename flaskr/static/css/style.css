@@ -1,0 +1,58 @@
+.image-big {
+    width: 200px;
+    height: 200px;
+}
+
+.image-small {
+    width: 100px;
+    height: 100px;
+}
+
+.image-mini {
+    width: 50px;
+    height: 50px;
+}
+
+.speech-bubble-self {
+    position: relative;
+    background: #dedede;
+    border-radius: .4em;
+    margin-bottom: 20px;
+}
+
+.speech-bubble-self:after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 0;
+    height: 0;
+    border: 10px solid transparent;
+    border-right-color: #dedede;
+    border-left: 0;
+    border-bottom: 0;
+    margin-top: -10px;
+    margin-left: -10px;
+}
+
+.speech-bubble-dest {
+    position: relative;
+    background: #05c4d6;
+    border-radius: .4em;
+    margin-bottom: 20px;
+}
+
+.speech-bubble-dest:after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    width: 0;
+    height: 0;
+    border: 10px solid transparent;
+    border-left-color: #05c4d6;
+    border-right: 0;
+    border-bottom: 0;
+    margin-top: -10px;
+    margin-right: -10px;
+}

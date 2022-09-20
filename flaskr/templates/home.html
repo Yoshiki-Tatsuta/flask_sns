@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% from '_helpers.html' import validate_picture %}
+
+{% block title %}
+    Home{{super()}}
+{% endblock %}
+
+{% block container %}
+<h1>ホーム画面</h1>
+
+
+{% if current_user.is_authenticated %}
+    {{validate_picture(current_user, 'image-big')}}
+    <p>ユーザ名：{{current_user.username}}</p>
+    <p>一言コメント：{{current_user.comment}}</p>
+
+    {% if friends %}
+    <h2>友達一覧</h2>
+    <div class="table-responsive">
+    <table class="table table-striped">
+        <tr>
+            <th>#</th>
+            <th>友達名</th>
+            <th>友達画像</th>
+            <th>コメント</th>
+            <th>メッセージ</th>
+            <th>友達解除</th>
+        </tr>
+        {% for friend in friends %}
+            <tr>
+                <td>{{loop.index}}</td>
+                <td>{{friend.username}}</td>
+                <td>{{validate_picture(friend, 'image-small')}}</td>
+                <td>{{friend.comment}}</td>
+                <td><a href="{{url_for('message', to_user_id=friend.id)}}" class="btn btn-primary" role="button">メッセージを送る</a></td>
+                <td>
+                    <form method="POST" action="{{url_for('delete_connect')}}">
+                        <button type="submit" class="btn btn-warning" name="id" value="{{friend.id}}">友達解除</button>
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+    </div>
+    {% endif %}
+
+    
+    {% if requested_friends %}
+    <h2>承認待ちユーザ</h2>
+    <div class="table-responsive">
+    <table class="table table-striped">
+        <tr>
+            <th>#</th>
+            <th>ユーザ名</th>
+            <th>ユーザ画像</th>
+            <th>コメント</th>
+            <th>友達承認</th>
+            <th>友達棄却</th>
+        </tr>
+        
+        {% for requested_friend in requested_friends %}
+            <tr>
+                <td>{{loop.index}}</td>
+                <td>{{requested_friend.username}}</td>
+                <td>{{validate_picture(requested_friend, 'image-small')}}</td>
+                <td>{{requested_friend.comment}}</td>
+                <td>
+                    <form method="POST" action="{{url_for('user_connect')}}">
+                        {{connect_form.to_user_id(value=requested_friend.id)}}
+                        {{connect_form.connect_status(value="approve")}}
+                        {{connect_form.submit(class="btn btn-info", value="友達承認する")}}
+                    </form>
+                </td>
+                <td>
+                    <form method="POST" action="{{url_for('delete_connect')}}">
+                        <button type="submit" class="btn btn-warning" name="id" value="{{requested_friend.id}}">友達を却下する</button>
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+    </div>
+    {% endif %}
+
+
+{% else %}
+    <p>ログインするのじゃ</p>
+{% endif %}
+
+
+{% endblock %}
