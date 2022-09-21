@@ -2,5 +2,11 @@
     "regions": [
         "hnd1"
     ],
+    "builds": [
+        {
+            "src": "./setup.py",
+            "use": "@vercel/python"
+        }
+    ],
     "rewrites": [{ "source": "/(.*)", "destination": "/"}]
 }
