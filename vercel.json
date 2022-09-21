@@ -8,5 +8,5 @@
             "use": "@vercel/python"
         }
     ],
-    "rewrites": [{ "source": "/(.*)", "destination": "./setup"}]
+    "rewrites": [{ "source": "/(.*)", "destination": "/"}]
 }
